@@ -3,7 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.28307.421
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MagMan", "MagMan\MagMan.csproj", "{C718A44D-9001-4F37-B67D-DCFB66243261}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MagManChain", "MagManChain\MagManChain.csproj", "{5337E3D4-4B4D-4763-9D39-3246EDA3E77F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StartProject", "StartProject\StartProject.csproj", "{4279DDAB-8B0C-4F26-AEE8-1DCB295952EF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LoginRegister", "LoginRegister\LoginRegister.csproj", "{441846E0-96AB-48AD-883D-CA9E93718CEF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,10 +15,18 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{C718A44D-9001-4F37-B67D-DCFB66243261}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C718A44D-9001-4F37-B67D-DCFB66243261}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C718A44D-9001-4F37-B67D-DCFB66243261}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C718A44D-9001-4F37-B67D-DCFB66243261}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5337E3D4-4B4D-4763-9D39-3246EDA3E77F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5337E3D4-4B4D-4763-9D39-3246EDA3E77F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5337E3D4-4B4D-4763-9D39-3246EDA3E77F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5337E3D4-4B4D-4763-9D39-3246EDA3E77F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4279DDAB-8B0C-4F26-AEE8-1DCB295952EF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4279DDAB-8B0C-4F26-AEE8-1DCB295952EF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4279DDAB-8B0C-4F26-AEE8-1DCB295952EF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4279DDAB-8B0C-4F26-AEE8-1DCB295952EF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{441846E0-96AB-48AD-883D-CA9E93718CEF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{441846E0-96AB-48AD-883D-CA9E93718CEF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{441846E0-96AB-48AD-883D-CA9E93718CEF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{441846E0-96AB-48AD-883D-CA9E93718CEF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
