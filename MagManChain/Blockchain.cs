@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Data;
+using Microsoft.Data.SqlClient;
 
 namespace MagMan
 {
     public class Blockchain
     {
+        public string ConnectionString { get; set; } = "Data Source=(local);Initial Catalog=Blockchain;Integrated Security=true";
         public IList<Transaction> PendingTransactions = new List<Transaction>(); // Store newly added transactions.
         public IList<Block> Chain { set; get; }
         public int Difficulty { set; get; } = 2; 
@@ -97,28 +99,37 @@ namespace MagMan
         /// </summary>
         /// <param name="address"> User address</param>
         /// <returns></returns>
-        public int GetBalance(string address)
+
+        public void ActualizeTransactions(Block block)
         {
-            int balance = 0;
-
-            for (int i = 0; i < Chain.Count; i++)
+            using (SqlConnection con = new SqlConnection(ConnectionString))
             {
-                for (int j = 0; j < Chain[i].Transactions.Count; j++)
+                decimal balanceFrom;
+                decimal balanceTo;
+
+                foreach (var transaction in block.Transactions)
                 {
-                    var transaction = Chain[i].Transactions[j];
+                    SqlCommand cmd1 = new SqlCommand("select dbo.User ValidateUserEmail(@code)", con);
+                    SqlParameter param1 = new SqlParameter("@code", SqlDbType.VarChar);
+                    param1.Value = transaction.FromAddress;
+                    con.Open();
+                    balanceFrom = (decimal)cmd1.ExecuteScalar();
 
-                    if (transaction.FromAddress == address)
+                    SqlCommand cmd2 = new SqlCommand("select dbo.User ValidateUserEmail(@code)", con);
+                    SqlParameter param2 = new SqlParameter("@code", SqlDbType.VarChar);
+                    param2.Value = transaction.ToAddress;
+                    balanceTo = (decimal)cmd2.ExecuteScalar();
+                    con.Close();
+
+                    if (balanceFrom > transaction.Amount)
                     {
-                        balance -= transaction.Amount;
+
                     }
 
-                    if (transaction.ToAddress == address)
-                    {
-                        balance += transaction.Amount;
-                    }
                 }
             }
-            return balance;
+
         }
+
     }
 }
