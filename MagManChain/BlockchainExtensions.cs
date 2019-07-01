@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace MagMan
+﻿namespace MagMan
 {
     public static class BlockchainExtensions
     {

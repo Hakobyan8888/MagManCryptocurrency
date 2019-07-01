@@ -1,7 +1,5 @@
-﻿using System;
-using MongoDB.Bson;
+﻿using MagMan;
 using MongoDB.Driver;
-using MagMan;
 
 namespace AddBlock
 {
@@ -14,10 +12,9 @@ namespace AddBlock
             IMongoDatabase db = dbClient.GetDatabase("Blockchain");
             var collection = db.GetCollection<Block>("ChainOfBlocks");
             var coll = db.ListCollections().ToList();
-            
 
             collection.InsertOne(block);
-
+            collection.InsertOne(block);
         }
     }
 }

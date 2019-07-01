@@ -26,7 +26,7 @@ namespace MagMan
             Index = 0;
             TimeStamp = timeStamp;
             PreviousHash = previousHash;
-            Transactions= transactions;
+            Transactions = transactions;
             Hash = CalculateHash();
             Nonce = 0;
         }

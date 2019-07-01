@@ -1,7 +1,5 @@
 ﻿using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace MagMan
 {
@@ -10,15 +8,16 @@ namespace MagMan
         public static int Port = 0;
         public static P2PServer Server = null;
         public static P2PClient Client = new P2PClient();
-        public static Blockchain StairCoin = new Blockchain();
+        public static Blockchain magMan = new Blockchain();
         public static string name = "Unknown";
 
         public void Start(string[] args)
         {
-            StairCoin.InitializeChain();
+            magMan.InitializeChain();
 
             if (args.Length >= 1)
                 Port = int.Parse(args[0]);
+            Port = int.Parse(args[0]);
             if (args.Length >= 2)
                 name = args[1];
 
@@ -54,13 +53,13 @@ namespace MagMan
                         string receiverName = Console.ReadLine();
                         Console.WriteLine("Please enter the amount");
                         string amount = Console.ReadLine();
-                        StairCoin.CreateTransaction(new Transaction(name, receiverName, int.Parse(amount)));
-                        StairCoin.ProcessPendingTransactions(name);
-                        Client.Broadcast(JsonConvert.SerializeObject(StairCoin));
+                        magMan.CreateTransaction(new Transaction(name, receiverName, int.Parse(amount)));
+                        magMan.ProcessPendingTransactions(name);
+                        Client.Broadcast(JsonConvert.SerializeObject(magMan));
                         break;
                     case 3:
                         Console.WriteLine("Blockchain");
-                        Console.WriteLine(JsonConvert.SerializeObject(StairCoin, Formatting.Indented));
+                        Console.WriteLine(JsonConvert.SerializeObject(magMan, Formatting.Indented));
                         break;
 
                 }
