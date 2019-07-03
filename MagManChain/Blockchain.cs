@@ -10,7 +10,7 @@ namespace MagMan
         public string ConnectionString { get; set; } = "Data Source=(local);Initial Catalog=Blockchain;Integrated Security=true";
         public IList<Transaction> PendingTransactions = new List<Transaction>(); // Store newly added transactions.
         public IList<Block> Chain { set; get; }
-        public int Difficulty { set; get; } = 2; 
+        public int Difficulty { set; get; } = 2;
         public int Reward = 1; //1 cryptocurrency
 
         /// <summary>
@@ -90,7 +90,9 @@ namespace MagMan
             block.Index = latestBlock.Index + 1;
             block.PreviousHash = latestBlock.Hash;
             //block.Hash = block.CalculateHash();
+
             block.Mine(this.Difficulty);
+            ActualizeTransactions(block);
             Chain.Add(block);
         }
 
@@ -104,32 +106,41 @@ namespace MagMan
         {
             using (SqlConnection con = new SqlConnection(ConnectionString))
             {
-                decimal balanceFrom;
-                decimal balanceTo;
 
                 foreach (var transaction in block.Transactions)
                 {
-                    SqlCommand cmd1 = new SqlCommand("select dbo.User ValidateUserEmail(@code)", con);
-                    SqlParameter param1 = new SqlParameter("@code", SqlDbType.VarChar);
-                    param1.Value = transaction.FromAddress;
+
+                    SqlCommand cmd1 = new SqlCommand("select dbo.ValidateUserEmail(@addressFrom)", con);
+                    cmd1.Parameters.Add("@addressFrom", SqlDbType.VarChar);
+                    cmd1.Parameters["@addressFrom"].Value = transaction.FromAddress;
+
+                    SqlCommand cmd2 = new SqlCommand("select dbo.ValidateUserEmail(@addressTo)", con);
+                    cmd2.Parameters.Add("@addressTo", SqlDbType.VarChar);
+                    cmd2.Parameters["@addressTo"].Value = transaction.ToAddress;
+
                     con.Open();
-                    balanceFrom = (decimal)cmd1.ExecuteScalar();
-
-                    SqlCommand cmd2 = new SqlCommand("select dbo.User ValidateUserEmail(@code)", con);
-                    SqlParameter param2 = new SqlParameter("@code", SqlDbType.VarChar);
-                    param2.Value = transaction.ToAddress;
-                    balanceTo = (decimal)cmd2.ExecuteScalar();
-                    con.Close();
-
+                    decimal balanceFrom = (decimal)cmd1.ExecuteScalar();
+                    decimal balanceTo = (decimal)cmd2.ExecuteScalar();
+                                        
                     if (balanceFrom > transaction.Amount)
                     {
+                        SqlCommand commandAdding = new SqlCommand("UPDATE Users SET Balance = Balance + @amountAdd Where Email = @addressTo", con);
+                        commandAdding.Parameters.Add("@amountAdd", SqlDbType.Money);
+                        commandAdding.Parameters["@amountAdd"].Value = transaction.Amount;
+                        commandAdding.Parameters.Add("@addressTo", SqlDbType.VarChar);
+                        commandAdding.Parameters["@addressTo"].Value = transaction.ToAddress;
+                        commandAdding.ExecuteNonQuery();
 
+                        SqlCommand commandSub = new SqlCommand("UPDATE Users SET Balance = Balance - @amountSub Where Email = @addressFrom", con);
+                        commandSub.Parameters.Add("@amountSub", SqlDbType.Money);
+                        commandSub.Parameters["@amountSub"].Value = transaction.Amount;
+                        commandSub.Parameters.Add("@addressFrom", SqlDbType.VarChar);
+                        commandSub.Parameters["@addressFrom"].Value = transaction.FromAddress;
+                        commandSub.ExecuteNonQuery();
                     }
-
+                    con.Close();
                 }
             }
-
         }
-
     }
 }

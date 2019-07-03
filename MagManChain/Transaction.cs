@@ -12,7 +12,7 @@ namespace MagMan
     {
         public string FromAddress { get; set; } //the adress of person who transfers  money  
         public string ToAddress { get; set; } // the adress of person who recieves money 
-        public int Amount { get; set; } //the amount of money that is transferrred
+        public decimal Amount { get; set; } //the amount of money that is transferrred
 
         /// <summary>
         /// Initializing

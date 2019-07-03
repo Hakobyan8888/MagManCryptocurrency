@@ -19,5 +19,12 @@ namespace RegisterLogin.Controllers
             await HttpContext.SignOutAsync();
             return RedirectToAction("UserLogin", "Login");
         }
+
+        [HttpPost]
+        public IActionResult Transfer(string Address, string Amount)
+        {
+            System.Console.WriteLine($"{Address} {Amount}");
+            return RedirectToAction("UserLogin", "Login");
+        }
     }
 }

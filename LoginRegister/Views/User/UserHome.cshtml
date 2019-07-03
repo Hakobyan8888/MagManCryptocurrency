@@ -1,4 +1,5 @@
-﻿@{
+﻿@model LoginRegister.Models.TransferDetails
+@{
     ViewData["Title"] = "UserHome";
 }
 <ul class="nav navbar-nav navbar-right">
@@ -10,8 +11,19 @@
 <h2>UserHome</h2>
 <h3>This is the user home page</h3>
 
-<ul class="nav navbar-nav navbar-right">
-    <li>
-        <a asp-action="Logout">Sign Out</a>
-    </li>
-</ul>
+<form asp-action="UserHome">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <div class="form-group">
+        <label asp-for="Email" class="control-label"></label>
+        <input asp-for="Email" class="form-control" />
+        <span asp-validation-for="Email" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Amount" class="control-label"></label>
+        <input asp-for="Amount" class="form-control" />
+        <span asp-validation-for="Amount" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <input type="submit" value="Transaction" class="btn btn-default btn-success" />
+    </div>
+</form>
