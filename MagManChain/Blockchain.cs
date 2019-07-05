@@ -115,35 +115,38 @@ namespace MagMan
 
                 foreach (var transaction in block.Transactions)
                 {
-                    SqlCommand cmd1 = new SqlCommand("select dbo.ValidateUserEmail(@addressFrom)", con);
-                    cmd1.Parameters.Add("@addressFrom", SqlDbType.VarChar);
-                    cmd1.Parameters["@addressFrom"].Value = transaction.FromAddress;
-
-                    SqlCommand cmd2 = new SqlCommand("select dbo.ValidateUserEmail(@addressTo)", con);
-                    cmd2.Parameters.Add("@addressTo", SqlDbType.VarChar);
-                    cmd2.Parameters["@addressTo"].Value = transaction.ToAddress;
-
-                    con.Open();
-                    decimal balanceFrom = (decimal)cmd1.ExecuteScalar();
-                    decimal balanceTo = (decimal)cmd2.ExecuteScalar();
-                                        
-                    if (balanceFrom > transaction.Amount)
+                    if (transaction.FromAddress != null)
                     {
-                        SqlCommand commandAdding = new SqlCommand("UPDATE Users SET Balance = Balance + @amountAdd Where Email = @addressTo", con);
-                        commandAdding.Parameters.Add("@amountAdd", SqlDbType.Money);
-                        commandAdding.Parameters["@amountAdd"].Value = transaction.Amount;
-                        commandAdding.Parameters.Add("@addressTo", SqlDbType.VarChar);
-                        commandAdding.Parameters["@addressTo"].Value = transaction.ToAddress;
-                        commandAdding.ExecuteNonQuery();
+                        SqlCommand cmd1 = new SqlCommand("select dbo.ValidateUserEmail(@addressFrom)", con);
+                        cmd1.Parameters.Add("@addressFrom", SqlDbType.VarChar);
+                        cmd1.Parameters["@addressFrom"].Value = transaction.FromAddress;
 
-                        SqlCommand commandSub = new SqlCommand("UPDATE Users SET Balance = Balance - @amountSub Where Email = @addressFrom", con);
-                        commandSub.Parameters.Add("@amountSub", SqlDbType.Money);
-                        commandSub.Parameters["@amountSub"].Value = transaction.Amount;
-                        commandSub.Parameters.Add("@addressFrom", SqlDbType.VarChar);
-                        commandSub.Parameters["@addressFrom"].Value = transaction.FromAddress;
-                        commandSub.ExecuteNonQuery();
-                    }
-                    con.Close();
+                        SqlCommand cmd2 = new SqlCommand("select dbo.ValidateUserEmail(@addressTo)", con);
+                        cmd2.Parameters.Add("@addressTo", SqlDbType.VarChar);
+                        cmd2.Parameters["@addressTo"].Value = transaction.ToAddress;
+
+                        con.Open();
+                        decimal balanceFrom = (decimal)cmd1.ExecuteScalar();
+                        decimal balanceTo = (decimal)cmd2.ExecuteScalar();
+
+                        if (balanceFrom > transaction.Amount)
+                        {
+                            SqlCommand commandAdding = new SqlCommand("UPDATE Users SET Balance = Balance + @amountAdd Where Email = @addressTo", con);
+                            commandAdding.Parameters.Add("@amountAdd", SqlDbType.Money);
+                            commandAdding.Parameters["@amountAdd"].Value = transaction.Amount;
+                            commandAdding.Parameters.Add("@addressTo", SqlDbType.VarChar);
+                            commandAdding.Parameters["@addressTo"].Value = transaction.ToAddress;
+                            commandAdding.ExecuteNonQuery();
+
+                            SqlCommand commandSub = new SqlCommand("UPDATE Users SET Balance = Balance - @amountSub Where Email = @addressFrom", con);
+                            commandSub.Parameters.Add("@amountSub", SqlDbType.Money);
+                            commandSub.Parameters["@amountSub"].Value = transaction.Amount;
+                            commandSub.Parameters.Add("@addressFrom", SqlDbType.VarChar);
+                            commandSub.Parameters["@addressFrom"].Value = transaction.FromAddress;
+                            commandSub.ExecuteNonQuery();
+                        }
+                        con.Close();
+                    }                   
                 }
             }
         }

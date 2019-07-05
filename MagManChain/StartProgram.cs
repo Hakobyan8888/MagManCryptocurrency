@@ -26,7 +26,6 @@ namespace MagMan
 
             if (args.Length >= 1)
                 Port = int.Parse(args[0]);
-            Port = int.Parse(args[0]);
             if (args.Length >= 2)
                 name = args[1];
 
