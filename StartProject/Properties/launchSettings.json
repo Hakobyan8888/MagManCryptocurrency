@@ -1,8 +1,7 @@
 {
   "profiles": {
     "StartProject": {
-      "commandName": "Project",
-      "commandLineArgs": "6001 a@gmail.com"
+      "commandName": "Project"
     }
   }
 }

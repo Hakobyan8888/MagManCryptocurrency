@@ -10,8 +10,9 @@ namespace MagMan
         public string ConnectionString { get; set; } = "Data Source=(local);Initial Catalog=Blockchain;Integrated Security=true";
         public IList<Transaction> PendingTransactions = new List<Transaction>(); // Store newly added transactions.
         public IList<Block> Chain { set; get; }
-        public int Difficulty { set; get; } = 2;
-        public int Reward = 1; //1 cryptocurrency
+        public int Difficulty { set; get; } = 4;
+        public decimal Reward = 1; //1 cryptocurrency
+        public int BlockTime = 0;
 
         /// <summary>
         /// Constructor
@@ -73,8 +74,13 @@ namespace MagMan
         /// <param name="minerAddress"> A miner address</param>
         public void ProcessPendingTransactions(string minerAddress)
         {
+            int start = DateTime.UtcNow.Second;
             Block block = new Block(DateTime.Now, GetLatestBlock().Hash, PendingTransactions);
             AddBlock(block);
+            int end = DateTime.UtcNow.Second;
+            int timeDiff = end - start;
+
+            BlockTime += timeDiff;
 
             PendingTransactions = new List<Transaction>();
             CreateTransaction(new Transaction(null, minerAddress, Reward));
@@ -109,7 +115,6 @@ namespace MagMan
 
                 foreach (var transaction in block.Transactions)
                 {
-
                     SqlCommand cmd1 = new SqlCommand("select dbo.ValidateUserEmail(@addressFrom)", con);
                     cmd1.Parameters.Add("@addressFrom", SqlDbType.VarChar);
                     cmd1.Parameters["@addressFrom"].Value = transaction.FromAddress;
@@ -142,5 +147,11 @@ namespace MagMan
                 }
             }
         }
+        //public void CalculateDifficulty()
+        //{
+        //    Difficulty *= 7200 * 60 / BlockTime; 
+
+        //    BlockTime = 0;
+        //}
     }
 }

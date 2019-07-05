@@ -17,7 +17,7 @@ namespace MagMan
         /// <summary>
         /// Initializing
         /// </summary>
-        public Transaction(string fromAddress, string toAddress, int amount)
+        public Transaction(string fromAddress, string toAddress, decimal amount)
         {
             FromAddress = fromAddress;
             ToAddress = toAddress;

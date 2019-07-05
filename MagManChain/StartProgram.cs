@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System;
+using System.Threading;
 
 namespace MagMan
 {
@@ -13,6 +14,14 @@ namespace MagMan
 
         public void Start(string[] args)
         {
+            //var startTimeSpan = TimeSpan.Zero;
+            //var periodTimeSpan = TimeSpan.FromMinutes(7200);
+
+            //var timer = new Timer((e) =>
+            //{
+            //    magMan.CalculateDifficulty();
+            //}, null, startTimeSpan, periodTimeSpan);
+
             magMan.InitializeChain();
 
             if (args.Length >= 1)
@@ -53,7 +62,7 @@ namespace MagMan
                         string receiverName = Console.ReadLine();
                         Console.WriteLine("Please enter the amount");
                         string amount = Console.ReadLine();
-                        magMan.CreateTransaction(new Transaction(name, receiverName, int.Parse(amount)));
+                        magMan.CreateTransaction(new Transaction(name, receiverName, decimal.Parse(amount)));
                         magMan.ProcessPendingTransactions(name);
                         Client.Broadcast(JsonConvert.SerializeObject(magMan));
                         break;

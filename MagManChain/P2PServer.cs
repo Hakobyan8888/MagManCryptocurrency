@@ -13,10 +13,10 @@ namespace MagMan
 
         public void Start()
         {
-            wss = new WebSocketServer($"ws://127.0.0.1:{8080}");
+            wss = new WebSocketServer($"ws://127.0.0.1:{StartProgram.Port}");
             wss.AddWebSocketService<P2PServer>("/Blockchain");
             wss.Start();
-            Console.WriteLine($"Started server at ws://127.0.0.1:{8080}");
+            Console.WriteLine($"Started server at ws://127.0.0.1:{StartProgram.Port}");
         }
 
         protected override void OnMessage(MessageEventArgs e)
@@ -28,6 +28,7 @@ namespace MagMan
             }
             else
             {
+
                 Blockchain newChain = JsonConvert.DeserializeObject<Blockchain>(e.Data);
 
                 if (newChain.IsValid() && newChain.Chain.Count > StartProgram.magMan.Chain.Count)
@@ -38,14 +39,17 @@ namespace MagMan
 
                     newChain.PendingTransactions = newTransactions;
                     StartProgram.magMan = newChain;
+
                 }
 
                 if (!chainSynched)
                 {
+
                     Send(JsonConvert.SerializeObject(StartProgram.magMan));
                     chainSynched = true;
                 }
             }
+
         }
     }
 }
