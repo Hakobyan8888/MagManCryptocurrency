@@ -7,9 +7,11 @@ namespace MagMan
 {
     public class Blockchain
     {
+        Leader leader = new Leader();
         public string ConnectionString { get; set; } = "Data Source=(local);Initial Catalog=Blockchain;Integrated Security=true";
         public IList<Transaction> PendingTransactions = new List<Transaction>(); // Store newly added transactions.
         public IList<Block> Chain { set; get; }
+
         public int Difficulty { set; get; } = 4;
         public decimal Reward = 1; //1 cryptocurrency
         public int BlockTime = 0;
@@ -83,7 +85,7 @@ namespace MagMan
             BlockTime += timeDiff;
 
             PendingTransactions = new List<Transaction>();
-            CreateTransaction(new Transaction(null, minerAddress, Reward));
+            CreateTransaction(new Transaction(leader.LeaderAddress, minerAddress, Reward));
         }
 
         /// <summary>
@@ -115,7 +117,7 @@ namespace MagMan
 
                 foreach (var transaction in block.Transactions)
                 {
-                    if (transaction.FromAddress != null)
+                    if (transaction.FromAddress != leader.LeaderAddress)
                     {
                         SqlCommand cmd1 = new SqlCommand("select dbo.ValidateUserEmail(@addressFrom)", con);
                         cmd1.Parameters.Add("@addressFrom", SqlDbType.VarChar);
@@ -145,8 +147,19 @@ namespace MagMan
                             commandSub.Parameters["@addressFrom"].Value = transaction.FromAddress;
                             commandSub.ExecuteNonQuery();
                         }
-                        con.Close();
-                    }                   
+                        
+                    }
+                    else
+                    {
+                        leader.LeaderAmount -= Reward;
+                        SqlCommand commandAdding = new SqlCommand("UPDATE Users SET Balance = Balance + @reward Where Email = @addressTo", con);
+                        commandAdding.Parameters.Add("@reward", SqlDbType.Money);
+                        commandAdding.Parameters["@reward"].Value = transaction.Amount;
+                        commandAdding.Parameters.Add("@addressTo", SqlDbType.VarChar);
+                        commandAdding.Parameters["@addressTo"].Value = transaction.ToAddress;
+                        commandAdding.ExecuteNonQuery();
+                    }
+                    con.Close();
                 }
             }
         }
