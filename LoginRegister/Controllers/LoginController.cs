@@ -11,6 +11,8 @@ namespace RegisterLogin.Controllers
     {
         UserDataAccessLayer objUser = new UserDataAccessLayer();
 
+        public static string email;
+
         [HttpGet]
         public IActionResult RegisterUser()
         {
@@ -65,6 +67,7 @@ namespace RegisterLogin.Controllers
                     ClaimsPrincipal principal = new ClaimsPrincipal(userIdentity);
 
                     await HttpContext.SignInAsync(principal);
+                    email = user.Email;
                     return RedirectToAction("UserHome", "User");
                 }
                 else

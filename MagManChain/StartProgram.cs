@@ -1,6 +1,5 @@
-﻿using Newtonsoft.Json;
-using System;
-using System.Threading;
+﻿using System;
+using Newtonsoft.Json;
 
 namespace MagMan
 {
@@ -14,20 +13,17 @@ namespace MagMan
 
         public void Start(string[] args)
         {
-            //var startTimeSpan = TimeSpan.Zero;
-            //var periodTimeSpan = TimeSpan.FromMinutes(7200);
-
-            //var timer = new Timer((e) =>
-            //{
-            //    magMan.CalculateDifficulty();
-            //}, null, startTimeSpan, periodTimeSpan);
-
             magMan.InitializeChain();
 
             if (args.Length >= 1)
+            {
                 Port = int.Parse(args[0]);
+            }
+
             if (args.Length >= 2)
+            {
                 name = args[1];
+            }
 
             if (Port > 0)
             {

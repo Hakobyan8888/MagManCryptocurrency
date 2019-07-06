@@ -1,7 +1,9 @@
 ﻿@model LoginRegister.Models.TransferDetails
+
 @{
     ViewData["Title"] = "UserHome";
 }
+
 <ul class="nav navbar-nav navbar-right">
     <li>
         <a asp-action="Logout">Sign Out</a>
@@ -9,7 +11,9 @@
 </ul>
 
 <h2>UserHome</h2>
-<h3>This is the user home page</h3>
+<h3>
+    Balance @ViewData["Balance"]  
+</h3>
 
 <form asp-action="UserHome">
     <div asp-validation-summary="ModelOnly" class="text-danger"></div>

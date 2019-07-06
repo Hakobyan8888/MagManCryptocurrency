@@ -12,7 +12,7 @@ namespace LoginRegister.Models
         public static IConfiguration Configuration { get; set; }
 
         //To Read ConnectionString from appsettings.json file  
-        private static string GetConnectionString()
+        public static string GetConnectionString()
         {
             var builder = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())

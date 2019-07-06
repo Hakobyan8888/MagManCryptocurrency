@@ -7,14 +7,13 @@ namespace MagMan
 {
     public class Blockchain
     {
-        Leader leader = new Leader();
+        private Leader leader = new Leader();
         public string ConnectionString { get; set; } = "Data Source=(local);Initial Catalog=Blockchain;Integrated Security=true";
         public IList<Transaction> PendingTransactions = new List<Transaction>(); // Store newly added transactions.
         public IList<Block> Chain { set; get; }
 
-        public int Difficulty { set; get; } = 4;
+        public int Difficulty { set; get; } = 2;
         public decimal Reward = 1; //1 cryptocurrency
-        public int BlockTime = 0;
 
         /// <summary>
         /// Constructor
@@ -76,13 +75,8 @@ namespace MagMan
         /// <param name="minerAddress"> A miner address</param>
         public void ProcessPendingTransactions(string minerAddress)
         {
-            int start = DateTime.UtcNow.Second;
             Block block = new Block(DateTime.Now, GetLatestBlock().Hash, PendingTransactions);
             AddBlock(block);
-            int end = DateTime.UtcNow.Second;
-            int timeDiff = end - start;
-
-            BlockTime += timeDiff;
 
             PendingTransactions = new List<Transaction>();
             CreateTransaction(new Transaction(leader.LeaderAddress, minerAddress, Reward));
@@ -147,27 +141,23 @@ namespace MagMan
                             commandSub.Parameters["@addressFrom"].Value = transaction.FromAddress;
                             commandSub.ExecuteNonQuery();
                         }
-                        
+                        con.Close();
                     }
                     else
                     {
+                        
                         leader.LeaderAmount -= Reward;
-                        SqlCommand commandAdding = new SqlCommand("UPDATE Users SET Balance = Balance + @reward Where Email = @addressTo", con);
-                        commandAdding.Parameters.Add("@reward", SqlDbType.Money);
-                        commandAdding.Parameters["@reward"].Value = transaction.Amount;
-                        commandAdding.Parameters.Add("@addressTo", SqlDbType.VarChar);
-                        commandAdding.Parameters["@addressTo"].Value = transaction.ToAddress;
-                        commandAdding.ExecuteNonQuery();
+                        SqlCommand commandReward = new SqlCommand("UPDATE Users SET Balance = Balance + @reward Where Email = @addressTo", con);
+                        commandReward.Parameters.Add("@reward", SqlDbType.Money);
+                        commandReward.Parameters["@reward"].Value = transaction.Amount;
+                        commandReward.Parameters.Add("@addressTo", SqlDbType.VarChar);
+                        commandReward.Parameters["@addressTo"].Value = transaction.ToAddress;
+                        con.Open();
+                        commandReward.ExecuteNonQuery();
+                        con.Close();
                     }
-                    con.Close();
                 }
             }
         }
-        //public void CalculateDifficulty()
-        //{
-        //    Difficulty *= 7200 * 60 / BlockTime; 
-
-        //    BlockTime = 0;
-        //}
     }
 }
