@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Newtonsoft.Json;
 
 namespace MagMan
@@ -67,12 +67,10 @@ namespace MagMan
                         break;
 
                 }
-
                 Console.WriteLine("Please select an action");
                 string action = Console.ReadLine();
                 selection = int.Parse(action);
             }
-
             Client.Close();
         }
     }
