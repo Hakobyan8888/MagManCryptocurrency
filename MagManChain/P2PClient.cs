@@ -23,32 +23,26 @@ namespace MagMan
                     else
                     {
                         Blockchain newChain = JsonConvert.DeserializeObject<Blockchain>(e.Data);
-                        if (newChain.IsValid() && newChain.Chain.Count >StartProgram.magMan.Chain.Count)
+                        if (newChain.IsValid() && newChain.Chain.Count > StartProgram.magMan.Chain.Count)
                         {
                             List<Transaction> newTransactions = new List<Transaction>();
                             newTransactions.AddRange(newChain.PendingTransactions);
                             newTransactions.AddRange(StartProgram.magMan.PendingTransactions);
-                               
+
                             newChain.PendingTransactions = newTransactions;
                             StartProgram.magMan = newChain;
+                        }
+                        if (newChain.IsValid() && newChain.PendingTransactions.Count > StartProgram.magMan.PendingTransactions.Count)
+                        {
+                            StartProgram.magMan.PendingTransactions = newChain.PendingTransactions;
                         }
                     }
                 };
                 ws.Connect();
                 ws.Send("Hi Server");
+                ws.Send(JsonConvert.SerializeObject(StartProgram.magMan.PendingTransactions));
                 ws.Send(JsonConvert.SerializeObject(StartProgram.magMan));
                 wsDict.Add(url, ws);
-            }
-        }
-
-        public void Send(string url, string data)
-        {
-            foreach (var item in wsDict)
-            {
-                if (item.Key == url)
-                {
-                    item.Value.Send(data);
-                }
             }
         }
 
@@ -58,16 +52,6 @@ namespace MagMan
             {
                 item.Value.Send(data);
             }
-        }
-
-        public IList<string> GetServers()
-        {
-            IList<string> servers = new List<string>();
-            foreach (var item in wsDict)
-            {
-                servers.Add(item.Key);
-            }
-            return servers;
         }
 
         public void Close()
