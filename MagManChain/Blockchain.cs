@@ -1,26 +1,27 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using Microsoft.Data.SqlClient;
 
 namespace MagMan
 {
+    /// <summary>
+    /// A sequence of blocks containing some sort of data
+    /// </summary>
     public class Blockchain
     {
-        private Leader leader = new Leader();
-        public string ConnectionString { get; set; } = "Data Source=(local);Initial Catalog=Blockchain;Integrated Security=true";
-        public IList<Transaction> PendingTransactions = new List<Transaction>(); // Store newly added transactions.
-        public IList<Block> Chain { set; get; }
-
-        public int Difficulty { set; get; } = 2;
-        public decimal Reward = 1; //1 cryptocurrency
+        private Leader leader = new Leader(); // Leader who pays money to miners
+        public string ConnectionString { get; set; } = "Data Source=(local);Initial Catalog=Blockchain;Integrated Security=true"; // Connect to SQL database
+        public IList<Transaction> PendingTransactions = new List<Transaction>(); // Stores newly added transactions.
+        public IList<Block> Chain { set; get; } // Stores the main blockchain info
+        public int Difficulty { set; get; } = 2; // Indicates the number of leading zeros required for a generated hash
+        public decimal Reward = 1; // Money that leader pays to miners 
 
         /// <summary>
         /// Constructor
         /// </summary>
         public Blockchain()
         {
-
         }
 
         /// <summary>
@@ -33,7 +34,7 @@ namespace MagMan
         }
 
         /// <summary>
-        /// Create first block
+        /// Creates first block
         /// </summary>
         public Block CreateGenesisBlock()
         {
@@ -44,7 +45,7 @@ namespace MagMan
         }
 
         /// <summary>
-        /// Add first block to a chain
+        /// Adds first block to a chain
         /// </summary>
         public void AddGenesisBlock()
         {
@@ -52,7 +53,7 @@ namespace MagMan
         }
 
         /// <summary>
-        /// Get last block 
+        /// Gets last block 
         /// </summary>
         public Block GetLatestBlock()
         {
@@ -60,7 +61,7 @@ namespace MagMan
         }
 
         /// <summary>
-        /// Add a new transaction to the PendingTransaction collection. 
+        /// Adds a new transaction to the PendingTransaction collection. 
         /// </summary>
         /// <param name="transaction"> New transaction </param>
         public void CreateTransaction(Transaction transaction)
@@ -83,78 +84,72 @@ namespace MagMan
         }
 
         /// <summary>
-        /// Add that block to a chain
+        /// Adds that block to a chain
         /// </summary>
         /// <param name="block"></param>
         public void AddBlock(Block block)
         {
             Block latestBlock = GetLatestBlock();
-            block.Index = latestBlock.Index + 1;
-            block.PreviousHash = latestBlock.Hash;
-            //block.Hash = block.CalculateHash();
 
+            block.Index = latestBlock.Index + 1;
+            block.PreviousHash = latestBlock.Hash;            
             block.Mine(this.Difficulty);
             ActualizeTransactions(block);
             Chain.Add(block);
         }
 
         /// <summary>
-        /// Calculate the balance of a user of the blockchain.
+        /// Actualize transactions
         /// </summary>
-        /// <param name="address"> User address</param>
-        /// <returns></returns>
-
+        /// <param name="block">The block where transactions are actualized</param>
         public void ActualizeTransactions(Block block)
         {
-            using (SqlConnection con = new SqlConnection(ConnectionString))
+            using (SqlConnection connectionString = new SqlConnection(ConnectionString))
             {
-
                 foreach (var transaction in block.Transactions)
                 {
                     if (transaction.FromAddress != leader.LeaderAddress)
                     {
-                        SqlCommand cmd1 = new SqlCommand("select dbo.ValidateUserEmail(@addressFrom)", con);
-                        cmd1.Parameters.Add("@addressFrom", SqlDbType.VarChar);
-                        cmd1.Parameters["@addressFrom"].Value = transaction.FromAddress;
+                        SqlCommand commandAddressFrom = new SqlCommand("select dbo.ValidateUserEmail(@addressFrom)", connectionString);
+                        commandAddressFrom.Parameters.Add("@addressFrom", SqlDbType.VarChar);
+                        commandAddressFrom.Parameters["@addressFrom"].Value = transaction.FromAddress;
 
-                        SqlCommand cmd2 = new SqlCommand("select dbo.ValidateUserEmail(@addressTo)", con);
-                        cmd2.Parameters.Add("@addressTo", SqlDbType.VarChar);
-                        cmd2.Parameters["@addressTo"].Value = transaction.ToAddress;
+                        SqlCommand commandAddressTo = new SqlCommand("select dbo.ValidateUserEmail(@addressTo)", connectionString);
+                        commandAddressTo.Parameters.Add("@addressTo", SqlDbType.VarChar);
+                        commandAddressTo.Parameters["@addressTo"].Value = transaction.ToAddress;
 
-                        con.Open();
-                        decimal balanceFrom = (decimal)cmd1.ExecuteScalar();
-                        decimal balanceTo = (decimal)cmd2.ExecuteScalar();
+                        connectionString.Open();
+                        decimal balanceFrom = (decimal)commandAddressFrom.ExecuteScalar();
+                        decimal balanceTo = (decimal)commandAddressTo.ExecuteScalar();
 
                         if (balanceFrom > transaction.Amount)
                         {
-                            SqlCommand commandAdding = new SqlCommand("UPDATE Users SET Balance = Balance + @amountAdd Where Email = @addressTo", con);
+                            SqlCommand commandAdding = new SqlCommand("UPDATE Users SET Balance = Balance + @amountAdd Where Email = @addressTo", connectionString);
                             commandAdding.Parameters.Add("@amountAdd", SqlDbType.Money);
                             commandAdding.Parameters["@amountAdd"].Value = transaction.Amount;
                             commandAdding.Parameters.Add("@addressTo", SqlDbType.VarChar);
                             commandAdding.Parameters["@addressTo"].Value = transaction.ToAddress;
                             commandAdding.ExecuteNonQuery();
 
-                            SqlCommand commandSub = new SqlCommand("UPDATE Users SET Balance = Balance - @amountSub Where Email = @addressFrom", con);
+                            SqlCommand commandSub = new SqlCommand("UPDATE Users SET Balance = Balance - @amountSub Where Email = @addressFrom", connectionString);
                             commandSub.Parameters.Add("@amountSub", SqlDbType.Money);
                             commandSub.Parameters["@amountSub"].Value = transaction.Amount;
                             commandSub.Parameters.Add("@addressFrom", SqlDbType.VarChar);
                             commandSub.Parameters["@addressFrom"].Value = transaction.FromAddress;
                             commandSub.ExecuteNonQuery();
                         }
-                        con.Close();
                     }
                     else
                     {
-                        
                         leader.LeaderAmount -= Reward;
-                        SqlCommand commandReward = new SqlCommand("UPDATE Users SET Balance = Balance + @reward Where Email = @addressTo", con);
+                        SqlCommand commandReward = new SqlCommand("UPDATE Users SET Balance = Balance + @reward Where Email = @addressTo", connectionString);
                         commandReward.Parameters.Add("@reward", SqlDbType.Money);
                         commandReward.Parameters["@reward"].Value = transaction.Amount;
                         commandReward.Parameters.Add("@addressTo", SqlDbType.VarChar);
                         commandReward.Parameters["@addressTo"].Value = transaction.ToAddress;
-                        con.Open();
-                        commandReward.ExecuteNonQuery();
-                        con.Close();
+
+                        connectionString.Open();
+                        commandReward.ExecuteNonQuery();                        
                     }
                 }
             }
