@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using LoginRegister.Models;
 
-namespace RegisterLogin.Controllers
+namespace LoginRegister.Controllers
 {
     public class LoginController : Controller
     {
