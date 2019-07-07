@@ -4,7 +4,8 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-
+using LoginRegister.Models;
+using MagMan;
 
 namespace LoginRegister.Controllers
 {
@@ -35,15 +36,21 @@ namespace LoginRegister.Controllers
             return RedirectToAction("UserLogin", "Login");
         }
 
-        [HttpPost]
-        public IActionResult Transfer(string Address, string Amount)
+        public IActionResult UserBuy(BuyCoins buy)
         {
-            System.Console.WriteLine($"{Address} {Amount}");
-            return RedirectToAction("UserLogin", "Login");
-        }
-        public IActionResult UserBuy()
-        {
+            string BankAccount;
+            decimal Amount;
+            if (buy.Amount != null)
+            {
+                BankAccount = buy.BankAccount;
+                Amount = decimal.Parse(buy.Amount);
+                WebSocket ws = new WebSocket(url);
+                ws.OnMessage += (sender, e) =>
+                {
+
+                };
             return View();
+            }
         }
     }
 }

@@ -21,6 +21,7 @@ namespace MagMan
 
         protected override void OnMessage(MessageEventArgs e)
         {
+            
             if (e.Data == "Hi Server")
             {
                 Console.WriteLine(e.Data);
@@ -39,10 +40,12 @@ namespace MagMan
                     newChain.PendingTransactions = newTransactions;
                     StartProgram.magMan = newChain;
                 }
+
                 if (newChain.IsValid() && newChain.PendingTransactions.Count > StartProgram.magMan.PendingTransactions.Count)
                 {
                     StartProgram.magMan.PendingTransactions = newChain.PendingTransactions;
                 }
+                 
                 if (!chainSynched)
                 {
                     Send(JsonConvert.SerializeObject(StartProgram.magMan.PendingTransactions));

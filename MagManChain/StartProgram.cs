@@ -51,7 +51,7 @@ namespace MagMan
                         Console.WriteLine("Please enter the server URL");
                         string serverURL = Console.ReadLine();
                         Client.Connect($"{serverURL}/Blockchain");
-                        break;
+                        break;  
                     case 2:
                         Console.WriteLine("Please enter the receiver name");
                         string receiverName = Console.ReadLine();
