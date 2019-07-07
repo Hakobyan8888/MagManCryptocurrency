@@ -1,15 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace LoginRegister.Models
 {
     public class TransferDetails
     {
         [Required]
-        [Display(Name ="Balance")]
+        [Display(Name = "Balance")]
         public decimal Balance { get; set; }
 
         [Required]

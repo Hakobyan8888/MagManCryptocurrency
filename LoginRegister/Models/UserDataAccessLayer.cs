@@ -1,9 +1,9 @@
-﻿using Microsoft.Extensions.Configuration;
-using System.Data;
+﻿using System.Data;
 using System.Data.SqlClient;
 using System.IO;
 using System.Security.Cryptography;
 using System.Text;
+using Microsoft.Extensions.Configuration;
 
 namespace LoginRegister.Models
 {
@@ -11,7 +11,9 @@ namespace LoginRegister.Models
     {
         public static IConfiguration Configuration { get; set; }
 
-        //To Read ConnectionString from appsettings.json file  
+        /// <summary>
+        /// Reads ConnectionString from appsettings.json file  
+        /// </summary>
         public static string GetConnectionString()
         {
             var builder = new ConfigurationBuilder()
@@ -19,61 +21,67 @@ namespace LoginRegister.Models
                 .AddJsonFile("appsettings.json");
 
             Configuration = builder.Build();
-
             string connectionString = Configuration["ConnectionStrings:myConString"];
 
             return connectionString;
 
         }
 
-        string connectionString = GetConnectionString();
+        private readonly string connectionString = GetConnectionString(); // Connection string
 
-        //To Register a new user   
+        /// <summary>
+        /// Registers a new user 
+        /// </summary>
+        /// <param name="user"> User</param>
         public string RegisterUser(UserDetails user)
         {
-            using (SqlConnection con = new SqlConnection(connectionString))
+            using (SqlConnection connection = new SqlConnection(this.connectionString))
             {
                 if (IsValidEmail(user.Email))
                 {
-                    SqlCommand cmd = new SqlCommand("RegisterUser", con);
-                    cmd.CommandType = CommandType.StoredProcedure;
+                    SqlCommand commandRegister = new SqlCommand("RegisterUser", connection);
+                    commandRegister.CommandType = CommandType.StoredProcedure;
 
-                    cmd.Parameters.AddWithValue("@FirstName", user.FirstName);
-                    cmd.Parameters.AddWithValue("@LastName", user.LastName);
-                    cmd.Parameters.AddWithValue("@Email", user.Email);
-                    cmd.Parameters.AddWithValue("@UserPassword", ComputeSha256Hash(user.Password));
-                    cmd.Parameters.AddWithValue("@Balance", 0);
-                    con.Open();
-                    string result = cmd.ExecuteScalar().ToString();
-                    con.Close();
+                    commandRegister.Parameters.AddWithValue("@FirstName", user.FirstName);
+                    commandRegister.Parameters.AddWithValue("@LastName", user.LastName);
+                    commandRegister.Parameters.AddWithValue("@Email", user.Email);
+                    commandRegister.Parameters.AddWithValue("@UserPassword", ComputeSha256Hash(user.Password));
+                    commandRegister.Parameters.AddWithValue("@Balance", 0);
+                    connection.Open();
+                    string result = commandRegister.ExecuteScalar().ToString();
                     return result;
                 }
-                 return null;
-                
+                return null;
             }
         }
 
-        //To Validate the login  
+
+        /// <summary>
+        /// Validates the login   
+        /// </summary>
+        /// <param name="user"> User </param>
         public string ValidateLogin(UserDetails user)
         {
-            using (SqlConnection con = new SqlConnection(connectionString))
+            using (SqlConnection connection = new SqlConnection(connectionString))
             {
-                SqlCommand cmd = new SqlCommand("ValidateUserLogin", con);
-                cmd.CommandType = CommandType.StoredProcedure;
+                SqlCommand commandUser = new SqlCommand("ValidateUserLogin", connection);
+                commandUser.CommandType = CommandType.StoredProcedure;
 
-                cmd.Parameters.AddWithValue("@LoginEmail", user.Email);
-                cmd.Parameters.AddWithValue("@LoginPassword", ComputeSha256Hash(user.Password));
+                commandUser.Parameters.AddWithValue("@LoginEmail", user.Email);
+                commandUser.Parameters.AddWithValue("@LoginPassword", ComputeSha256Hash(user.Password));
 
-                con.Open();
-                string result = cmd.ExecuteScalar().ToString();
-                con.Close();
+                connection.Open();
+                string result = commandUser.ExecuteScalar().ToString();
 
                 return result;
             }
         }
 
-        // Hashing a password 
-        static string ComputeSha256Hash(string rawData)
+        /// <summary>
+        /// Hashing a password 
+        /// </summary>
+        /// <param name="rawData"> Password </param>
+        private static string ComputeSha256Hash(string rawData)
         {
             // Create a SHA256   
             using (SHA256 sha256Hash = SHA256.Create())
@@ -91,8 +99,11 @@ namespace LoginRegister.Models
             }
         }
 
-        // To Validate the Email
-        bool IsValidEmail(string email)
+        /// <summary>
+        /// Validates the Email
+        /// </summary>
+        /// <param name="email"> Email</param>
+        private bool IsValidEmail(string email)
         {
             try
             {

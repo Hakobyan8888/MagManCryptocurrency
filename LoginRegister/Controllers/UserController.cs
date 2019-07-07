@@ -1,11 +1,10 @@
 ﻿using System.Data;
 using System.Data.SqlClient;
 using System.Threading.Tasks;
+using LoginRegister.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using LoginRegister.Models;
-using MagMan;
 
 namespace LoginRegister.Controllers
 {
@@ -14,20 +13,19 @@ namespace LoginRegister.Controllers
     {
         public IActionResult UserHome()
         {
-            Models.TransferDetails transferDetails = new Models.TransferDetails();
-            using (SqlConnection con = new SqlConnection(Models.UserDataAccessLayer.GetConnectionString()))
+            TransferDetails transferDetails = new TransferDetails();
+            using (SqlConnection connectionString = new SqlConnection(UserDataAccessLayer.GetConnectionString()))
             {
-                SqlCommand cmd1 = new SqlCommand("select dbo.ValidateUserEmail(@address)", con);
-                cmd1.Parameters.Add("@address", SqlDbType.VarChar);
-                cmd1.Parameters["@address"].Value = LoginController.email;
-                con.Open();
-                transferDetails.Balance = (decimal)cmd1.ExecuteScalar();
-                con.Close();
+                SqlCommand commandBalance = new SqlCommand("select dbo.ValidateUserEmail(@address)", connectionString);
+                commandBalance.Parameters.Add("@address", SqlDbType.VarChar);
+                commandBalance.Parameters["@address"].Value = LoginController.email;
+                connectionString.Open();
+                transferDetails.Balance = (decimal)commandBalance.ExecuteScalar();
+                connectionString.Close();
             }
             ViewData["Balance"] = transferDetails.Balance;
             return View();
         }
-
 
         [HttpGet]
         public async Task<IActionResult> Logout()
@@ -44,13 +42,8 @@ namespace LoginRegister.Controllers
             {
                 BankAccount = buy.BankAccount;
                 Amount = decimal.Parse(buy.Amount);
-                WebSocket ws = new WebSocket(url);
-                ws.OnMessage += (sender, e) =>
-                {
-
-                };
-            return View();
             }
+            return View();
         }
     }
 }

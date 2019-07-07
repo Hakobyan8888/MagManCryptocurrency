@@ -1,15 +1,15 @@
 ﻿using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using LoginRegister.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
-using LoginRegister.Models;
 
 namespace LoginRegister.Controllers
 {
     public class LoginController : Controller
     {
-        UserDataAccessLayer objUser = new UserDataAccessLayer();
+        private UserDataAccessLayer objUser = new UserDataAccessLayer();
 
         public static string email;
 
@@ -77,8 +77,9 @@ namespace LoginRegister.Controllers
                 }
             }
             else
+            {
                 return View();
-
+            }
         }
     }
 }

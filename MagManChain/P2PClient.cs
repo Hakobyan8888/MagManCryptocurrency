@@ -1,20 +1,27 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using Newtonsoft.Json;
 using WebSocketSharp;
 
 namespace MagMan
 {
+    /// <summary>
+    /// P2P Client is used to initializing a connection with a server via WebSocket.
+    /// </summary>
     public class P2PClient
     {
-        IDictionary<string, WebSocket> wsDict = new Dictionary<string, WebSocket>();
+        private IDictionary<string, WebSocket> webSocketDictionary = new Dictionary<string, WebSocket>(); // Represents data and protocol pair
 
+        /// <summary>
+        /// Connect to the server
+        /// </summary>
+        /// <param name="url"> Specified URL</param>
         public void Connect(string url)
         {
-            if (!wsDict.ContainsKey(url))
+            if (!webSocketDictionary.ContainsKey(url))
             {
-                WebSocket ws = new WebSocket(url);
-                ws.OnMessage += (sender, e) =>
+                WebSocket webSocketClient = new WebSocket(url);
+                webSocketClient.OnMessage += (sender, e) =>
                 {
                     if (e.Data == "Hi Client")
                     {
@@ -38,25 +45,32 @@ namespace MagMan
                         }
                     }
                 };
-                ws.Connect();
-                ws.Send("Hi Server");
-                ws.Send(JsonConvert.SerializeObject(StartProgram.magMan.PendingTransactions));
-                ws.Send(JsonConvert.SerializeObject(StartProgram.magMan));
-                wsDict.Add(url, ws);
+                webSocketClient.Connect();
+                webSocketClient.Send("Hi Server");
+                webSocketClient.Send(JsonConvert.SerializeObject(StartProgram.magMan.PendingTransactions));
+                webSocketClient.Send(JsonConvert.SerializeObject(StartProgram.magMan));
+                webSocketDictionary.Add(url, webSocketClient);
             }
         }
 
+        /// <summary>
+        /// Sends the data using connection
+        /// </summary>
+        /// <param name="data"></param>
         public void Broadcast(string data)
         {
-            foreach (var item in wsDict)
+            foreach (var item in webSocketDictionary)
             {
                 item.Value.Send(data);
             }
         }
 
+        /// <summary>
+        /// Close the connection
+        /// </summary>
         public void Close()
         {
-            foreach (var item in wsDict)
+            foreach (var item in webSocketDictionary)
             {
                 item.Value.Close();
             }

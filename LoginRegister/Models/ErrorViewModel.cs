@@ -1,5 +1,3 @@
-using System;
-
 namespace LoginRegister.Models
 {
     public class ErrorViewModel
