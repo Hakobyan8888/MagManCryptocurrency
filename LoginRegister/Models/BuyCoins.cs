@@ -10,7 +10,7 @@ namespace LoginRegister.Models
     {
         [Required]
         [Display(Name = "Bank Account")]
-        public string FirstName { get; set; }
+        public string BankAccount { get; set; }
 
         [Required]
         [Display(Name = "Amount")]
