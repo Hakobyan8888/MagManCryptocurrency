@@ -1,0 +1,45 @@
+﻿@model LoginRegister.Models.BuyCoins
+
+@{
+    ViewData["Title"] = "UserBuy";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<ul class="nav navbar-nav navbar-right">
+    <li>
+        <a asp-action="Logout">Sign Out</a>
+    </li>
+</ul>
+
+<h2>UserBuy</h2>
+
+<h4>BuyCoins</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="UserBuy">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="FirstName" class="control-label"></label>
+                <input asp-for="FirstName" class="form-control" />
+                <span asp-validation-for="FirstName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Amount" class="control-label"></label>
+                <input asp-for="Amount" class="form-control" />
+                <span asp-validation-for="Amount" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-default" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

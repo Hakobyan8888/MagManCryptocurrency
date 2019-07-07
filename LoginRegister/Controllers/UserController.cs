@@ -6,15 +6,15 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 
-namespace RegisterLogin.Controllers
+namespace LoginRegister.Controllers
 {
     [Authorize]
     public class UserController : Controller
     {
         public IActionResult UserHome()
         {
-            LoginRegister.Models.TransferDetails transferDetails = new LoginRegister.Models.TransferDetails();
-            using (SqlConnection con = new SqlConnection(LoginRegister.Models.UserDataAccessLayer.GetConnectionString()))
+            Models.TransferDetails transferDetails = new Models.TransferDetails();
+            using (SqlConnection con = new SqlConnection(Models.UserDataAccessLayer.GetConnectionString()))
             {
                 SqlCommand cmd1 = new SqlCommand("select dbo.ValidateUserEmail(@address)", con);
                 cmd1.Parameters.Add("@address", SqlDbType.VarChar);
@@ -25,8 +25,6 @@ namespace RegisterLogin.Controllers
             }
             ViewData["Balance"] = transferDetails.Balance;
             return View();
-            return View();
-           
         }
 
 
@@ -42,6 +40,10 @@ namespace RegisterLogin.Controllers
         {
             System.Console.WriteLine($"{Address} {Amount}");
             return RedirectToAction("UserLogin", "Login");
+        }
+        public IActionResult UserBuy()
+        {
+            return View();
         }
     }
 }
