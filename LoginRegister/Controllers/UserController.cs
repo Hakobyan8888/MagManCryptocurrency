@@ -39,11 +39,10 @@ namespace LoginRegister.Controllers
             return RedirectToAction("UserLogin", "Login");
         }
 
-        public IActionResult UserBuyAsync(BuyCoins buy)
+        public IActionResult UserBuy(BuyCoins buy)
         {
             string BankAccount;
             decimal Amount;
-
             if (buy.Amount != null)
             {
                 string FromAddress = "";
@@ -55,7 +54,6 @@ namespace LoginRegister.Controllers
                 {
                     web.Connect();
                     web.Send(JsonConvert.SerializeObject(new { FromAddress, ToAddress, Amount }));
-                    Client.Broadcast(JsonConvert.SerializeObject(magMan));
                 }
             }
             return View();
