@@ -18,5 +18,11 @@ namespace MagMan
             ToAddress = toAddress;
             Amount = amount;
         }
+
+        
+        public Transaction()
+        {
+
+        }
     }
 }

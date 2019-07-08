@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using WebSocketSharp;
 using WebSocketSharp.Server;
 
@@ -14,6 +17,7 @@ namespace MagMan
         private bool chainSynched = false;
         private WebSocketServer webSocketServer = null;
 
+
         /// <summary>
         /// Established a connection with a client
         /// </summary>
@@ -25,16 +29,28 @@ namespace MagMan
             Console.WriteLine($"Started server at ws://127.0.0.1:{StartProgram.Port}");
         }
 
+        
         /// <summary> 
         /// The server verifies data and compares it with its own Blockchain. 
         /// If the client blockchain is valid and it is longer than the server Blockchain, 
         /// the server uses the client blockchain, otherwise, 
         /// the server will send a copy of its own Blockchain to the client.
         /// </summary>
-        /// <param name="e"></param>
+        /// <param name="e">Event argument</param>
         protected override void OnMessage(MessageEventArgs e)
         {
-            if (e.Data == "Hi Server")
+            if (JsonConvert.DeserializeObject(e.Data).ToString().Contains("Amount"))
+            {
+                Leader leader = new Leader();
+                JObject jObject = JObject.Parse(e.Data);
+                string fromAddress = "ha.stepan02@gmail.com";
+                string toAddress = (string)jObject["ToAddress"];
+                decimal amount = (decimal)jObject["Amount"];
+                Transaction transaction = new Transaction(fromAddress, toAddress, amount);
+                StartProgram.magMan.CreateTransaction(transaction);
+                StartProgram.magMan.ProcessPendingTransactions(StartProgram.name);
+            }
+            else if (e.Data == "Hi Server")
             {
                 Console.WriteLine(e.Data);
                 Send("Hi Client");
