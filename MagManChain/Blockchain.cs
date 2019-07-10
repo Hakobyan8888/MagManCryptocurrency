@@ -10,8 +10,9 @@ namespace MagMan
     /// </summary>
     public class Blockchain
     {
+        private int i = 0;
         private Leader leader = new Leader(); // Leader who pays money to miners
-        public string ConnectionString { get; set; } = "Data Source=(local);Initial Catalog=Blockchain;Integrated Security=true"; // Connect to SQL database
+        private string Connection { get; set; } = "Data Source=(local);Initial Catalog=Blockchain;Integrated Security=true"; // Connect to SQL database
         public IList<Transaction> PendingTransactions = new List<Transaction>(); // Stores newly added transactions.
         public IList<Block> Chain { set; get; } // Stores the main blockchain info
         public int Difficulty { set; get; } = 2; // Indicates the number of leading zeros required for a generated hash
@@ -104,7 +105,7 @@ namespace MagMan
         /// <param name="block">The block where transactions are actualized</param>
         public void ActualizeTransactions(Block block)
         {
-            using (SqlConnection connectionString = new SqlConnection(ConnectionString))
+            using (SqlConnection connectionString = new SqlConnection(Connection))
             {
                 foreach (var transaction in block.Transactions)
                 {
@@ -119,6 +120,7 @@ namespace MagMan
                         commandAddressTo.Parameters["@addressTo"].Value = transaction.ToAddress;
 
                         connectionString.Open();
+
                         decimal balanceFrom = (decimal)commandAddressFrom.ExecuteScalar();
                         decimal balanceTo = (decimal)commandAddressTo.ExecuteScalar();
 
@@ -147,9 +149,9 @@ namespace MagMan
                         commandReward.Parameters["@reward"].Value = transaction.Amount;
                         commandReward.Parameters.Add("@addressTo", SqlDbType.VarChar);
                         commandReward.Parameters["@addressTo"].Value = transaction.ToAddress;
-
                         connectionString.Open();
-                        commandReward.ExecuteNonQuery();                        
+                        commandReward.ExecuteNonQuery();
+                        connectionString.Close();
                     }
                 }
             }

@@ -1,5 +1,8 @@
-﻿using System.Data;
+﻿using System;
+using System.Data;
 using System.Data.SqlClient;
+//using System.Net.WebSockets;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using LoginRegister.Models;
@@ -16,7 +19,7 @@ namespace LoginRegister.Controllers
     {
 
         public static string url = $"ws://127.0.0.1:6001/Blockchain";
-        
+
         public IActionResult UserHome()
         {
             TransferDetails transferDetails = new TransferDetails();
@@ -45,15 +48,19 @@ namespace LoginRegister.Controllers
             decimal Amount;
             if (buy.Amount != null)
             {
-                string FromAddress = "";
-                string ToAddress = LoginController.email;
+                var FromAddress = string.Empty;
+                var ToAddress = LoginController.email;
+                var Type = "transaction";
 
                 BankAccount = buy.BankAccount;
                 Amount = decimal.Parse(buy.Amount);
+                
                 using (WebSocket web = new WebSocket(url))
                 {
                     web.Connect();
-                    web.Send(JsonConvert.SerializeObject(new { FromAddress, ToAddress, Amount }));
+                    web.Send(JsonConvert.SerializeObject(new { Type, FromAddress, ToAddress, Amount }));
+                    Thread.Sleep(5000);
+                    web.Close(); 
                 }
             }
             return View();

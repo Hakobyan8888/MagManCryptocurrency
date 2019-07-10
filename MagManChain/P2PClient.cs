@@ -10,18 +10,14 @@ namespace MagMan
     /// </summary>
     public class P2PClient
     {
-        private IDictionary<string, WebSocket> webSocketDictionary = new Dictionary<string, WebSocket>(); // Represents data and protocol pair
+        IDictionary<string, WebSocket> wsDict = new Dictionary<string, WebSocket>();
 
-        /// <summary>
-        /// Connect to the server
-        /// </summary>
-        /// <param name="url"> Specified URL</param>
         public void Connect(string url)
         {
-            if (!webSocketDictionary.ContainsKey(url))
+            if (!wsDict.ContainsKey(url))
             {
-                WebSocket webSocketClient = new WebSocket(url);
-                webSocketClient.OnMessage += (sender, e) =>
+                WebSocket ws = new WebSocket(url);
+                ws.OnMessage += (sender, e) =>
                 {
                     if (e.Data == "Hi Client")
                     {
@@ -39,38 +35,47 @@ namespace MagMan
                             newChain.PendingTransactions = newTransactions;
                             StartProgram.magMan = newChain;
                         }
-                        if (newChain.IsValid() && newChain.PendingTransactions.Count > StartProgram.magMan.PendingTransactions.Count)
-                        {
-                            StartProgram.magMan.PendingTransactions = newChain.PendingTransactions;
-                        }
                     }
                 };
-                webSocketClient.Connect();
-                webSocketClient.Send("Hi Server");
-                webSocketClient.Send(JsonConvert.SerializeObject(StartProgram.magMan.PendingTransactions));
-                webSocketClient.Send(JsonConvert.SerializeObject(StartProgram.magMan));
-                webSocketDictionary.Add(url, webSocketClient);
+                ws.Connect();
+                ws.Send("Hi Server");
+                ws.Send(JsonConvert.SerializeObject(StartProgram.magMan));
+                wsDict.Add(url, ws);
             }
         }
 
-        /// <summary>
-        /// Sends the data using connection
-        /// </summary>
-        /// <param name="data"></param>
+        public void Send(string url, string data)
+        {
+            foreach (var item in wsDict)
+            {
+                if (item.Key == url)
+                {
+                    item.Value.Send(data);
+                }
+            }
+        }
+
         public void Broadcast(string data)
         {
-            foreach (var item in webSocketDictionary)
+            foreach (var item in wsDict)
             {
                 item.Value.Send(data);
             }
         }
 
-        /// <summary>
-        /// Close the connection
-        /// </summary>
+        public IList<string> GetServers()
+        {
+            IList<string> servers = new List<string>();
+            foreach (var item in wsDict)
+            {
+                servers.Add(item.Key);
+            }
+            return servers;
+        }
+
         public void Close()
         {
-            foreach (var item in webSocketDictionary)
+            foreach (var item in wsDict)
             {
                 item.Value.Close();
             }
