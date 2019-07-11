@@ -26,20 +26,20 @@ namespace MagMan
                     else
                     {
                         Blockchain newChain = JsonConvert.DeserializeObject<Blockchain>(e.Data);
-                        if (newChain.IsValid() && newChain.Chain.Count > StartProgram.magMan.Chain.Count)
+                        if (newChain.IsValid() && newChain.Chain.Count > StartProgram.MagMan.Chain.Count)
                         {
                             List<Transaction> newTransactions = new List<Transaction>();
                             newTransactions.AddRange(newChain.PendingTransactions);
-                            newTransactions.AddRange(StartProgram.magMan.PendingTransactions);
+                            newTransactions.AddRange(StartProgram.MagMan.PendingTransactions);
 
                             newChain.PendingTransactions = newTransactions;
-                            StartProgram.magMan = newChain;
+                            StartProgram.MagMan = newChain;
                         }
                     }
                 };
                 ws.Connect();
                 ws.Send("Hi Server");
-                ws.Send(JsonConvert.SerializeObject(StartProgram.magMan));
+                ws.Send(JsonConvert.SerializeObject(StartProgram.MagMan));
                 wsDict.Add(url, ws);
             }
         }

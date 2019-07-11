@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using WebSocketSharp;
@@ -16,6 +14,7 @@ namespace MagMan
     {
         bool chainSynched = false;
         WebSocketServer wss = null;
+        P2PClient Client = new P2PClient();
 
         public void Start()
         {
@@ -32,23 +31,35 @@ namespace MagMan
                 Console.WriteLine(e.Data);
                 Send("Hi Client");
             }
+            else if (JsonConvert.DeserializeObject(e.Data).ToString().Contains("Type"))
+            {
+                Leader leader = new Leader();
+                JObject jObject = JObject.Parse(e.Data);
+                string fromAddress = leader.LeaderAddress;
+                string toAddress = (string)jObject["ToAddress"];
+                decimal amount = (decimal)jObject["Amount"];
+                Transaction transaction = new Transaction(fromAddress, toAddress, amount);
+                StartProgram.MagMan.CreateTransaction(transaction);
+                StartProgram.MagMan.ProcessPendingTransactions(StartProgram.name);
+                
+            }
             else
             {
                 Blockchain newChain = JsonConvert.DeserializeObject<Blockchain>(e.Data);
 
-                if (newChain.IsValid() && newChain.Chain.Count > StartProgram.magMan.Chain.Count)
+                if (newChain.IsValid() && newChain.Chain.Count > StartProgram.MagMan.Chain.Count)
                 {
                     List<Transaction> newTransactions = new List<Transaction>();
                     newTransactions.AddRange(newChain.PendingTransactions);
-                    newTransactions.AddRange(StartProgram.magMan.PendingTransactions);
+                    newTransactions.AddRange(StartProgram.MagMan.PendingTransactions);
 
                     newChain.PendingTransactions = newTransactions;
-                    StartProgram.magMan = newChain;
+                    StartProgram.MagMan = newChain;
                 }
 
                 if (!chainSynched)
                 {
-                    Send(JsonConvert.SerializeObject(StartProgram.magMan));
+                    Send(JsonConvert.SerializeObject(StartProgram.MagMan));
                     chainSynched = true;
                 }
             }

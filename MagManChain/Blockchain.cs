@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using Microsoft.Data.SqlClient;
+using Newtonsoft.Json;
 
 namespace MagMan
 {
@@ -105,53 +106,54 @@ namespace MagMan
         /// <param name="block">The block where transactions are actualized</param>
         public void ActualizeTransactions(Block block)
         {
-            using (SqlConnection connectionString = new SqlConnection(Connection))
+            using (SqlConnection Connection = new SqlConnection(this.Connection))
             {
                 foreach (var transaction in block.Transactions)
                 {
                     if (transaction.FromAddress != leader.LeaderAddress)
                     {
-                        SqlCommand commandAddressFrom = new SqlCommand("select dbo.ValidateUserEmail(@addressFrom)", connectionString);
+                        SqlCommand commandAddressFrom = new SqlCommand("select dbo.ValidateUserEmail(@addressFrom)", Connection);
                         commandAddressFrom.Parameters.Add("@addressFrom", SqlDbType.VarChar);
                         commandAddressFrom.Parameters["@addressFrom"].Value = transaction.FromAddress;
 
-                        SqlCommand commandAddressTo = new SqlCommand("select dbo.ValidateUserEmail(@addressTo)", connectionString);
+                        SqlCommand commandAddressTo = new SqlCommand("select dbo.ValidateUserEmail(@addressTo)", Connection);
                         commandAddressTo.Parameters.Add("@addressTo", SqlDbType.VarChar);
                         commandAddressTo.Parameters["@addressTo"].Value = transaction.ToAddress;
 
-                        connectionString.Open();
+                        Connection.Open();
 
                         decimal balanceFrom = (decimal)commandAddressFrom.ExecuteScalar();
                         decimal balanceTo = (decimal)commandAddressTo.ExecuteScalar();
 
                         if (balanceFrom > transaction.Amount)
                         {
-                            SqlCommand commandAdding = new SqlCommand("UPDATE Users SET Balance = Balance + @amountAdd Where Email = @addressTo", connectionString);
+                            SqlCommand commandAdding = new SqlCommand("UPDATE Users SET Balance = Balance + @amountAdd Where Email = @addressTo", Connection);
                             commandAdding.Parameters.Add("@amountAdd", SqlDbType.Money);
                             commandAdding.Parameters["@amountAdd"].Value = transaction.Amount;
                             commandAdding.Parameters.Add("@addressTo", SqlDbType.VarChar);
                             commandAdding.Parameters["@addressTo"].Value = transaction.ToAddress;
                             commandAdding.ExecuteNonQuery();
 
-                            SqlCommand commandSub = new SqlCommand("UPDATE Users SET Balance = Balance - @amountSub Where Email = @addressFrom", connectionString);
+                            SqlCommand commandSub = new SqlCommand("UPDATE Users SET Balance = Balance - @amountSub Where Email = @addressFrom", Connection);
                             commandSub.Parameters.Add("@amountSub", SqlDbType.Money);
                             commandSub.Parameters["@amountSub"].Value = transaction.Amount;
                             commandSub.Parameters.Add("@addressFrom", SqlDbType.VarChar);
                             commandSub.Parameters["@addressFrom"].Value = transaction.FromAddress;
                             commandSub.ExecuteNonQuery();
                         }
+                        Connection.Close();
                     }
                     else
                     {
                         leader.LeaderAmount -= Reward;
-                        SqlCommand commandReward = new SqlCommand("UPDATE Users SET Balance = Balance + @reward Where Email = @addressTo", connectionString);
+                        SqlCommand commandReward = new SqlCommand("UPDATE Users SET Balance = Balance + @reward Where Email = @addressTo", Connection);
                         commandReward.Parameters.Add("@reward", SqlDbType.Money);
                         commandReward.Parameters["@reward"].Value = transaction.Amount;
                         commandReward.Parameters.Add("@addressTo", SqlDbType.VarChar);
                         commandReward.Parameters["@addressTo"].Value = transaction.ToAddress;
-                        connectionString.Open();
+                        Connection.Open();
                         commandReward.ExecuteNonQuery();
-                        connectionString.Close();
+                        Connection.Close();
                     }
                 }
             }

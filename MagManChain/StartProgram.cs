@@ -8,29 +8,23 @@ namespace MagMan
         public static int Port = 0;
         public static P2PServer Server = null;
         public static P2PClient Client = new P2PClient();
-        public static Blockchain magMan = new Blockchain();
+        public static Blockchain MagMan = new Blockchain();
         public static string name = "Unknown";
 
         public void Start(string[] args)
         {
-            magMan.InitializeChain();
+            MagMan.InitializeChain();
 
             if (args.Length >= 1)
-            {
                 Port = int.Parse(args[0]);
-            }
-
             if (args.Length >= 2)
-            {
                 name = args[1];
-            }
 
             if (Port > 0)
             {
                 Server = new P2PServer();
                 Server.Start();
             }
-
             if (name != "Unkown")
             {
                 Console.WriteLine($"Current user is {name}");
@@ -58,20 +52,23 @@ namespace MagMan
                         string receiverName = Console.ReadLine();
                         Console.WriteLine("Please enter the amount");
                         string amount = Console.ReadLine();
-                        magMan.CreateTransaction(new Transaction(name, receiverName, decimal.Parse(amount)));
-                        magMan.ProcessPendingTransactions(name);
-                        Client.Broadcast(JsonConvert.SerializeObject(magMan));
+                        MagMan.CreateTransaction(new Transaction(name, receiverName, int.Parse(amount)));
+                        MagMan.ProcessPendingTransactions(name);
                         break;
                     case 3:
                         Console.WriteLine("Blockchain");
-                        Console.WriteLine(JsonConvert.SerializeObject(magMan, Formatting.Indented));
+                        
+                        Console.WriteLine(JsonConvert.SerializeObject(MagMan, Formatting.Indented));
                         break;
 
                 }
+                Client.Broadcast(JsonConvert.SerializeObject(MagMan));
                 Console.WriteLine("Please select an action");
                 string action = Console.ReadLine();
+
                 selection = int.Parse(action);
             }
+
             Client.Close();
         }
     }
