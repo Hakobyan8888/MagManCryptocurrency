@@ -55,11 +55,11 @@ namespace MagMan
             }
             else
             {
-                Blockchain newChain = JsonConvert.DeserializeObject<Blockchain>(e.Data);
+                var newChain = JsonConvert.DeserializeObject<Blockchain>(e.Data);
 
                 if (newChain.IsValid() && newChain.Chain.Count > StartProgram.MagMan.Chain.Count)
                 {
-                    List<Transaction> newTransactions = new List<Transaction>();
+                    var newTransactions = new List<Transaction>();
                     newTransactions.AddRange(newChain.PendingTransactions);
                     newTransactions.AddRange(StartProgram.MagMan.PendingTransactions);
 

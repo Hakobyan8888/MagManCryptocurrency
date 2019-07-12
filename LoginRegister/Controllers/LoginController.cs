@@ -79,7 +79,7 @@ namespace LoginRegister.Controllers
             else
             {
                 return View();
-            }
+            } 
         }
     }
 }

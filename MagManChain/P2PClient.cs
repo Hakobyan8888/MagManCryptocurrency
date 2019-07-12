@@ -16,8 +16,8 @@ namespace MagMan
         {
             if (!wsDict.ContainsKey(url))
             {
-                WebSocket ws = new WebSocket(url);
-                ws.OnMessage += (sender, e) =>
+                var webSocket = new WebSocket(url);
+                webSocket.OnMessage += (sender, e) =>
                 {
                     if (e.Data == "Hi Client")
                     {
@@ -25,10 +25,10 @@ namespace MagMan
                     }
                     else
                     {
-                        Blockchain newChain = JsonConvert.DeserializeObject<Blockchain>(e.Data);
+                        var newChain = JsonConvert.DeserializeObject<Blockchain>(e.Data);
                         if (newChain.IsValid() && newChain.Chain.Count > StartProgram.MagMan.Chain.Count)
                         {
-                            List<Transaction> newTransactions = new List<Transaction>();
+                            var newTransactions = new List<Transaction>();
                             newTransactions.AddRange(newChain.PendingTransactions);
                             newTransactions.AddRange(StartProgram.MagMan.PendingTransactions);
 
@@ -37,10 +37,10 @@ namespace MagMan
                         }
                     }
                 };
-                ws.Connect();
-                ws.Send("Hi Server");
-                ws.Send(JsonConvert.SerializeObject(StartProgram.MagMan));
-                wsDict.Add(url, ws);
+                webSocket.Connect();
+                webSocket.Send("Hi Server");
+                webSocket.Send(JsonConvert.SerializeObject(StartProgram.MagMan));
+                wsDict.Add(url, webSocket);
             }
         }
 
@@ -65,7 +65,7 @@ namespace MagMan
 
         public IList<string> GetServers()
         {
-            IList<string> servers = new List<string>();
+            var servers = new List<string>();
             foreach (var item in wsDict)
             {
                 servers.Add(item.Key);

@@ -1,17 +1,11 @@
 ﻿@model LoginRegister.Models.TransferDetails
 @{
     ViewData["Title"] = "UserHome";
+    Layout = "~/Views/Shared/UserLayout.cshtml";
 }
-
-<ul class="nav navbar-nav navbar-right">
-    <li>
-        <a asp-action="Logout">Sign Out</a>
-    </li>
-</ul>
-
-<h2>UserHome</h2>
+<h2>Home</h2>
 <h3>
-    Balance @ViewData["Balance"]
+    Balance   @ViewData["Balance"]
 </h3>
 
 <form asp-action="UserHome">

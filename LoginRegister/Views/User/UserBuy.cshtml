@@ -1,18 +1,16 @@
 ﻿@model LoginRegister.Models.BuyCoins
 @{
     ViewData["Title"] = "UserBuy";
-    Layout = "~/Views/Shared/_Layout.cshtml";
+    Layout = "~/Views/Shared/UserLayout.cshtml";
 }
 
 <ul class="nav navbar-nav navbar-right">
-    <li>
-        <a asp-action="Logout">Sign Out</a>
-    </li>
+    
 </ul>
 
-<h2>UserBuy</h2>
-
-<h4>BuyCoins</h4>
+<h2>User Buy</h2>
+<br />
+<h4>Buy Coins</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
@@ -34,11 +32,3 @@
         </form>
     </div>
 </div>
-
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
-
-@section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-}

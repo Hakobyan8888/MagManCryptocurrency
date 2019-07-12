@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using Microsoft.Data.SqlClient;
-using Newtonsoft.Json;
 
 namespace MagMan
 {
@@ -11,7 +10,6 @@ namespace MagMan
     /// </summary>
     public class Blockchain
     {
-        private int i = 0;
         private Leader leader = new Leader(); // Leader who pays money to miners
         private string Connection { get; set; } = "Data Source=(local);Initial Catalog=Blockchain;Integrated Security=true"; // Connect to SQL database
         public IList<Transaction> PendingTransactions = new List<Transaction>(); // Stores newly added transactions.
@@ -94,7 +92,7 @@ namespace MagMan
             Block latestBlock = GetLatestBlock();
 
             block.Index = latestBlock.Index + 1;
-            block.PreviousHash = latestBlock.Hash;            
+            block.PreviousHash = latestBlock.Hash;
             block.Mine(this.Difficulty);
             ActualizeTransactions(block);
             Chain.Add(block);
