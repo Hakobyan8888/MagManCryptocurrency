@@ -13,14 +13,14 @@ namespace MagMan
     public class P2PServer : WebSocketBehavior
     {
         bool chainSynched = false;
-        WebSocketServer wss = null;
+        WebSocketServer webSocketServer = null;
         P2PClient Client = new P2PClient();
 
         public void Start()
         {
-            wss = new WebSocketServer($"ws://127.0.0.1:{StartProgram.Port}");
-            wss.AddWebSocketService<P2PServer>("/Blockchain");
-            wss.Start();
+            webSocketServer = new WebSocketServer($"ws://127.0.0.1:{StartProgram.Port}");
+            webSocketServer.AddWebSocketService<P2PServer>("/Blockchain");
+            webSocketServer.Start();
             Console.WriteLine($"Started server at ws://127.0.0.1:{StartProgram.Port}");
         }
 
@@ -32,16 +32,26 @@ namespace MagMan
                 Send("Hi Client");
             }
             else if (JsonConvert.DeserializeObject(e.Data).ToString().Contains("Type"))
-            {
-                Leader leader = new Leader();
-                JObject jObject = JObject.Parse(e.Data);
-                string fromAddress = leader.LeaderAddress;
-                string toAddress = (string)jObject["ToAddress"];
-                decimal amount = (decimal)jObject["Amount"];
-                Transaction transaction = new Transaction(fromAddress, toAddress, amount);
+            {               
+                var fromAddress = "";
+                var jObject = JObject.Parse(e.Data);
+                
+                if((string)jObject["FromAddress"] == null)
+                {
+                    var leader = new Leader();
+                    fromAddress = leader.LeaderAddress;
+                }
+                else
+                {
+                    fromAddress = (string)jObject["FromAddress"];
+                }
+                var toAddress = (string)jObject["ToAddress"];
+                var amount = (decimal)jObject["Amount"];
+                var transaction = new Transaction(fromAddress, toAddress, amount);
                 StartProgram.MagMan.CreateTransaction(transaction);
                 StartProgram.MagMan.ProcessPendingTransactions(StartProgram.name);
-                
+
+
             }
             else
             {

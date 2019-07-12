@@ -20,19 +20,41 @@ namespace LoginRegister.Controllers
 
         public static string url = $"ws://127.0.0.1:6001/Blockchain";
 
-        public IActionResult UserHome()
+        public IActionResult UserHome(TransferDetails transferDetails)
+        {
+            ViewData["Balance"] = GetBalance();
+            if (transferDetails.Amount != null)
+            {
+                var FromAddress = LoginController.email;
+                var ToAddress = transferDetails.ToAddress;
+                var Amount = Decimal.Parse(transferDetails.Amount);
+                var Type = "transaction";
+                if (GetBalance() >= Amount)
+                {
+                    using (WebSocket web = new WebSocket(url))
+                    {
+                        web.Connect();
+                        web.Send(JsonConvert.SerializeObject(new { Type, FromAddress, ToAddress, Amount }));
+                        Thread.Sleep(5000);
+                        web.Close();
+                    }
+                }
+            }
+            return View();
+        }
+
+        private decimal GetBalance()
         {
             TransferDetails transferDetails = new TransferDetails();
-            using (SqlConnection connectionString = new SqlConnection(UserDataAccessLayer.GetConnectionString()))
+            using (SqlConnection connection = new SqlConnection(UserDataAccessLayer.GetConnectionString()))
             {
-                SqlCommand commandBalance = new SqlCommand("select dbo.ValidateUserEmail(@address)", connectionString);
+                SqlCommand commandBalance = new SqlCommand("select dbo.ValidateUserEmail(@address)", connection);
                 commandBalance.Parameters.Add("@address", SqlDbType.VarChar);
                 commandBalance.Parameters["@address"].Value = LoginController.email;
-                connectionString.Open();
+                connection.Open();
                 transferDetails.Balance = (decimal)commandBalance.ExecuteScalar();
             }
-            ViewData["Balance"] = transferDetails.Balance;
-            return View();
+            return transferDetails.Balance;
         }
 
         [HttpGet]
@@ -54,13 +76,13 @@ namespace LoginRegister.Controllers
 
                 BankAccount = buy.BankAccount;
                 Amount = decimal.Parse(buy.Amount);
-                
+
                 using (WebSocket web = new WebSocket(url))
                 {
                     web.Connect();
                     web.Send(JsonConvert.SerializeObject(new { Type, FromAddress, ToAddress, Amount }));
                     Thread.Sleep(5000);
-                    web.Close(); 
+                    web.Close();
                 }
             }
             return View();
