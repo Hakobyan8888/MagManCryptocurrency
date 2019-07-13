@@ -53,11 +53,11 @@ namespace MagMan
                         Console.WriteLine("Please enter the amount");
                         string amount = Console.ReadLine();
                         MagMan.CreateTransaction(new Transaction(name, receiverName, int.Parse(amount)));
+                        Client.Broadcast(JsonConvert.SerializeObject(MagMan));
                         MagMan.ProcessPendingTransactions(name);
                         break;
                     case 3:
                         Console.WriteLine("Blockchain");
-                        
                         Console.WriteLine(JsonConvert.SerializeObject(MagMan, Formatting.Indented));
                         break;
 
@@ -70,6 +70,10 @@ namespace MagMan
             }
 
             Client.Close();
+        }
+        public static void SendData()
+        {
+            Client.Broadcast(JsonConvert.SerializeObject(MagMan));
         }
     }
 }

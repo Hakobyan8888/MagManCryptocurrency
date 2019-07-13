@@ -36,7 +36,7 @@ namespace MagMan
                 var fromAddress = "";
                 var jObject = JObject.Parse(e.Data);
                 
-                if((string)jObject["FromAddress"] == null)
+                if((string)jObject["FromAddress"] == string.Empty)
                 {
                     var leader = new Leader();
                     fromAddress = leader.LeaderAddress;
@@ -49,9 +49,8 @@ namespace MagMan
                 var amount = (decimal)jObject["Amount"];
                 var transaction = new Transaction(fromAddress, toAddress, amount);
                 StartProgram.MagMan.CreateTransaction(transaction);
+                StartProgram.SendData();
                 StartProgram.MagMan.ProcessPendingTransactions(StartProgram.name);
-
-
             }
             else
             {
