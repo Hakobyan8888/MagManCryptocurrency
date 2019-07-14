@@ -61,7 +61,7 @@ namespace LoginRegister.Controllers
                 {
                     var claims = new List<Claim>
                     {
-                        new Claim(ClaimTypes.Name, user.Email)
+                        new Claim(ClaimTypes.Email, user.Email)
                     };
                     ClaimsIdentity userIdentity = new ClaimsIdentity(claims, "login");
                     ClaimsPrincipal principal = new ClaimsPrincipal(userIdentity);
@@ -79,7 +79,7 @@ namespace LoginRegister.Controllers
             else
             {
                 return View();
-            } 
+            }
         }
     }
 }
