@@ -43,7 +43,7 @@ namespace LoginRegister.Controllers
             {
                 var userData = new UserDataAccessLayer();
                 var FromAddress = LoginController.email;
-                var ToAddress = transferDetails.ToAddress;
+                var ToAddress = transferDetails.Address;
                 var Amount = decimal.Parse(transferDetails.Amount);
                 var Type = "transaction";
                 var LoginStatus = userData.ValidateUserEmail(ToAddress);

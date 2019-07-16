@@ -9,8 +9,8 @@ namespace LoginRegister.Models
         public decimal Balance { get; set; }
 
         [Required]
-        [Display(Name = "ToAddress")]
-        public string ToAddress { get; set; }
+        [Display(Name = "To Address")]
+        public string Address { get; set; }
 
         [Required]
         [Display(Name = "Amount")]
