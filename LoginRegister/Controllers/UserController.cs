@@ -1,8 +1,5 @@
-﻿using System;
-using System.Data;
+﻿using System.Data;
 using System.Data.SqlClient;
-//using System.Net.WebSockets;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using LoginRegister.Models;
@@ -44,11 +41,14 @@ namespace LoginRegister.Controllers
             ViewData["Balance"] = GetBalance();
             if (transferDetails.Amount != null)
             {
+                var userData = new UserDataAccessLayer();
                 var FromAddress = LoginController.email;
                 var ToAddress = transferDetails.ToAddress;
-                var Amount = Decimal.Parse(transferDetails.Amount);
+                var Amount = decimal.Parse(transferDetails.Amount);
                 var Type = "transaction";
-                if (GetBalance() >= Amount)
+                var LoginStatus = userData.ValidateUserEmail(ToAddress);
+
+                if (GetBalance() >= Amount && LoginStatus == "Success")
                 {
                     using (WebSocket web = new WebSocket(url))
                     {
@@ -58,8 +58,12 @@ namespace LoginRegister.Controllers
                         web.Close();
                     }
                 }
+                else
+                {
+                    TempData["UserEmailFailed"] = "The email you’ve entered doesn’t match any account";
+                }
             }
-            return View();
+            return View();            
         }
 
         private decimal GetBalance()

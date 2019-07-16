@@ -55,7 +55,6 @@ namespace LoginRegister.Models
             }
         }
 
-
         /// <summary>
         /// Validates the login   
         /// </summary>
@@ -74,6 +73,32 @@ namespace LoginRegister.Models
                 string result = commandUser.ExecuteScalar().ToString();
 
                 return result;
+            }
+        }
+
+        /// <summary>
+        /// Validate the user
+        /// </summary>
+        /// <param name="email"> User email </param>
+        public string ValidateUserEmail(string email)
+        {
+            if (IsValidEmail(email))
+            {
+                using (SqlConnection connection = new SqlConnection(connectionString))
+                {
+                    SqlCommand commandUser = new SqlCommand("ValidateUser", connection);
+                    commandUser.CommandType = CommandType.StoredProcedure;
+
+                    commandUser.Parameters.AddWithValue("@LoginEmail", email);
+                    connection.Open();
+                    string result = commandUser.ExecuteScalar().ToString();
+
+                    return result;
+                }
+            }
+            else
+            {
+                return "Failed";
             }
         }
 
