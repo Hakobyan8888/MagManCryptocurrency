@@ -1,11 +1,10 @@
-﻿using MagMan;
 using MongoDB.Driver;
 
-namespace AddBlock
+namespace MagMan
 {
     public class AddMongoDB
     {
-        MongoClient dbClient = new MongoClient("mongodb://127.0.0.1:27017");
+        private MongoClient dbClient = new MongoClient("mongodb://127.0.0.1:27017");
 
         public void AddBlock(Block block)
         {
