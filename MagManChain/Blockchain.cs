@@ -16,6 +16,7 @@ namespace MagMan
         public IList<Block> Chain { set; get; } // Stores the main blockchain info
         public int Difficulty { set; get; } = 2; // Indicates the number of leading zeros required for a generated hash
         public decimal Reward = 1; // Money that leader pays to miners 
+        public AddMongoDB mongoDb = new AddMongoDB(); // For inserting block's details into MongoDb
 
         /// <summary>
         /// Constructor
@@ -96,6 +97,7 @@ namespace MagMan
             block.Mine(this.Difficulty);
             ActualizeTransactions(block);
             Chain.Add(block);
+            mongoDb.AddBlock(block);
         }
 
         /// <summary>
