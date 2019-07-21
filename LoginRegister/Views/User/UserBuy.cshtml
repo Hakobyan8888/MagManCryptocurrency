@@ -4,31 +4,30 @@
     Layout = "~/Views/Shared/UserLayout.cshtml";
 }
 
-<ul class="nav navbar-nav navbar-right">
-    
-</ul>
-
-<h2>User Buy</h2>
-<br />
-<h4>Buy Coins</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="UserBuy">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="BankAccount" class="control-label"></label>
-                <input asp-for="BankAccount" class="form-control" />
-                <span asp-validation-for="BankAccount" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Amount" class="control-label"></label>
-                <input asp-for="Amount" class="form-control" />
-                <span asp-validation-for="Amount" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Buy" class="btn btn-default" />
-            </div>
-        </form>
+<ul class="nav navbar-nav navbar-right"></ul>
+<div class="container">
+    <h2>User Buy</h2>
+    <br />
+    <h4>Buy Coins</h4>
+    <hr />
+    <div class="row">
+        <div class="col-md-4">
+            <form asp-action="UserBuy">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="form-group">
+                    <label asp-for="BankAccount" class="control-label"></label>
+                    <input asp-for="BankAccount" class="form-control" />
+                    <span asp-validation-for="BankAccount" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Amount" class="control-label"></label>
+                    <input asp-for="Amount" class="form-control" />
+                    <span asp-validation-for="Amount" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <input type="submit" value="Buy" class="btn btn-default" />
+                </div>
+            </form>
+        </div>
     </div>
 </div>

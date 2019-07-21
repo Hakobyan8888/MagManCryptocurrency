@@ -3,15 +3,29 @@ for details on configuring this project to bundle and minify static web assets. 
 body {
     padding-top: 50px;
     padding-bottom: 20px;
+    background-color: #fff;
+    overflow-x: hidden;
+    width: 100% !important;
 }
 
 /* Wrapping element */
 /* Set some basic padding to keep content from hitting the edges */
-.body-content {
-    padding-left: 15px;
-    padding-right: 15px;
+
+.container{
+    margin-left:50px;
 }
 
+.hero-container {
+    width: 100% !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+}
+
+.body-content {
+    width: 100% !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+}
 /* Carousel */
 .carousel-caption p {
     font-size: 20px;
@@ -41,11 +55,218 @@ body {
 }
 
 
-.navbar a{
-    color: black!important;
-    font-size: 16px!important;
-} 
+    .navbar a {
+        color: black !important;
+        font-size: 16px !important;
+    }
 
 .nav {
     margin-left: 30px;
+}
+
+#myCarousel {
+    width: 100% !important;
+}
+
+.carousel-inner {
+    width: 100%;
+}
+
+.mainhero {
+    padding: 110px 0 100px;
+    background: #fff;
+}
+
+.hero-container{
+    text-align:center;
+}
+
+.mainsummary {
+    max-width: 770px;
+    margin: 0 auto 45px;
+    font-size: 321.5%;
+    color: #1C1F30;
+}
+
+.btn-container {
+    text-align: center;
+}
+
+.btn-bright {
+    background: #FF9500;
+    color: #fff;
+}
+
+.btn-home {
+    width: 325px;
+    height: 55px;
+}
+
+.btn {
+    display: inline-block;
+    max-width: 100%;
+    padding: 16px 25px;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    font-weight: 600;
+    font-size: 100%;
+    color: #fff;
+    border-radius: 1px;
+}
+.main-image {
+    position: relative;
+    padding: 375px 0 130px;
+    background: url(../images/banner-top.png) top no-repeat;
+    background-size: cover;
+    text-align: center;
+    padding-bottom:50px;
+}
+
+.overview {
+    max-width: 1230px;
+    padding: 0 30px;
+    margin: 0 auto;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+}
+.maincard {
+    display: inline-block;
+    width: 260px;
+    height: 200px;
+    margin: 0 8px;
+    padding: 40px 32px 0;
+    text-align: center;
+    background: #090c14;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    vertical-align: top;
+}
+
+.mainoverview-title {
+    font-size: 162.5%;
+    text-align: center;
+    margin-bottom: 40px;
+    color: #FFFFFF;
+}
+
+
+.maindesc {
+    padding: 100px 0 70px;
+}
+.home-title {
+    margin: 0 0 50px;
+}
+.center {
+    text-align: center;
+    margin-right: auto;
+    margin-left: auto;
+}
+.section-title {
+    font-size: 162.5%;
+    font-weight: normal;
+    color: #FF7E00;
+}
+p{
+    line-height: 1.5em;
+}
+
+.maindesc-row {
+    -webkit-box-pack: justify;
+    -ms-flex-pack: justify;
+    justify-content: space-between;
+    margin: 0 0 60px;
+}
+
+.row {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+}
+
+.content {
+    position: relative;
+    text-align: justify;
+    background-color: #fff;
+    min-height: 400px;
+}
+
+.maindesc-text {
+    max-width: 67%;
+    margin: 0 0 90px;
+    font-size: 125%;
+    text-align: left;
+    color: #4D5060;
+}
+
+.maincard-title {
+    margin: 0;
+    font-size: 137.5%;
+    line-height: 1.9;
+    color: #FFFFFF;
+}
+
+.maincard-link {
+    font-size: 100%;
+    color: #9D9D9D;
+}
+
+
+element.style {
+}
+
+.maincard {
+    display: inline-block;
+    width: 260px;
+    height: 200px;
+    margin: 0 8px;
+    padding: 40px 32px 0;
+    text-align: center;
+    background: #090c14;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    vertical-align: top;
+}
+
+a {
+    color: #3490E6;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+ul {
+    display: block;
+    list-style-type: disc;
+    margin-block-start: 1em;
+    margin-block-end: 1em;
+    margin-inline-start: 0px;
+    margin-inline-end: 0px;
+    padding-inline-start: 40px;
+}
+
+img {
+    border: 0;
+}
+
+
+.mainlist-item {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    margin: 0 0 17px;
+}
+.mainlist-item img {
+    width: 30px;
+    height: 30px;
+    margin: 0 25px 0 0;
+}
+
+.mainlist-item p {
+    font-weight: 600;
+    font-size: 106.25%;
+    color: #13161F;
+}
+
+.maindesc-img{
+    width:50%;
+    height:auto;
 }

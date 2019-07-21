@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using System;
 
 namespace LoginRegister
 {
@@ -22,7 +23,7 @@ namespace LoginRegister
                     .AddCookie(options =>
                     {
                         options.LoginPath = "/Login/UserLogin/";
-
+                        options.ExpireTimeSpan = TimeSpan.FromMinutes(10); 
                     });
             services.AddMvc();
         }
@@ -31,7 +32,6 @@ namespace LoginRegister
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
             app.UseAuthentication();
-
             if (env.IsDevelopment())
             {
                 app.UseBrowserLink();
@@ -48,7 +48,7 @@ namespace LoginRegister
             {
                 routes.MapRoute(
                     name: "default",
-                    template: "{controller=Login}/{action=UserLogin}/{id?}");
+                    template: "{controller=Home}/{action=Index}/{id?}");
             });
         }
     }
